@@ -1,0 +1,8 @@
+{
+  "name": "ai_erp",
+  "language": "Node.js/TypeScript",
+  "testFramework": "Vitest",
+  "coverageThreshold": 80,
+  "externalTools": ["Claude"],
+  "setupTimestamp": "2026-05-16T00:00:00Z"
+}
