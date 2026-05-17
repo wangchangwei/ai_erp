@@ -1,7 +1,8 @@
 import { create } from 'zustand';
-import type { Product, Supplier, Customer, PurchaseOrder, SalesOrder, InventoryLog } from './types';
+import type { Product, Supplier, Customer, PurchaseOrder, SalesOrder, InventoryLog, UserPermission } from './types';
 
 interface Store {
+  currentUser: UserPermission;
   products: Product[];
   suppliers: Supplier[];
   customers: Customer[];
@@ -36,6 +37,7 @@ interface Store {
   getProduct: (id: string) => Product | undefined;
   getSupplier: (id: string) => Supplier | undefined;
   getCustomer: (id: string) => Customer | undefined;
+  hasPermission: (permission: string) => boolean;
 }
 
 const generateId = () => Math.random().toString(36).substring(2, 9).toUpperCase();
@@ -57,7 +59,20 @@ const initialCustomers: Customer[] = [
   { id: 'C002', name: '另一家公司', contact: '13900139002' },
 ];
 
+// 当前用户权限配置 - 可根据需要调整
+const initialCurrentUser: UserPermission = {
+  permissions: [
+    'product:read',
+    'supplier:read',
+    'customer:read',
+    // 'purchase:read',  // 注释掉则采购菜单不显示
+    // 'sales:read',
+    // 'inventory:read',
+  ],
+};
+
 export const useStore = create<Store>((set, get) => ({
+  currentUser: initialCurrentUser,
   products: initialProducts,
   suppliers: initialSuppliers,
   customers: initialCustomers,
@@ -197,4 +212,5 @@ export const useStore = create<Store>((set, get) => ({
   getProduct: (id) => get().products.find(p => p.id === id),
   getSupplier: (id) => get().suppliers.find(s => s.id === id),
   getCustomer: (id) => get().customers.find(c => c.id === id),
+  hasPermission: (permission) => get().currentUser.permissions.includes(permission),
 }));

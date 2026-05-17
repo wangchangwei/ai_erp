@@ -1,17 +1,23 @@
 import { Link, useLocation } from 'react-router-dom';
+import { useStore } from '../store';
 
 const navItems = [
-  { path: '/', label: '首页' },
-  { path: '/products', label: '商品' },
-  { path: '/suppliers', label: '供应商' },
-  { path: '/customers', label: '客户' },
-  { path: '/purchase', label: '采购订单' },
-  { path: '/sales', label: '销售订单' },
-  { path: '/inventory', label: '库存' },
+  { path: '/', label: '首页', requiredPermission: null },
+  { path: '/products', label: '商品', requiredPermission: 'product:read' },
+  { path: '/suppliers', label: '供应商', requiredPermission: 'supplier:read' },
+  { path: '/customers', label: '客户', requiredPermission: 'customer:read' },
+  { path: '/purchase', label: '采购订单', requiredPermission: 'purchase:read' },
+  { path: '/sales', label: '销售订单', requiredPermission: 'sales:read' },
+  { path: '/inventory', label: '库存', requiredPermission: 'inventory:read' },
 ];
 
 export function Layout({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const hasPermission = useStore((state) => state.hasPermission);
+
+  const visibleNavItems = navItems.filter(
+    (item) => item.requiredPermission === null || hasPermission(item.requiredPermission)
+  );
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
@@ -26,7 +32,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <small style={{ color: '#888' }}>进销存 Demo</small>
         </div>
         <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-          {navItems.map(item => (
+          {visibleNavItems.map(item => (
             <li key={item.path}>
               <Link
                 to={item.path}
