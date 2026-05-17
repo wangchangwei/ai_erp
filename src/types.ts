@@ -52,3 +52,7 @@ export interface InventoryLog {
   orderType: 'purchase' | 'sale';
   date: string;
 }
+
+export interface UserPermission {
+  permissions: string[];
+}
